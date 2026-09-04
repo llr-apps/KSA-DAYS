@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F6E45" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1411" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Days in and out of Saudi Arabia per calendar year, under the midnight rule, on the St Christopher's Bahrain school calendar.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="KSA Days">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>KSA Days</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F4F0; --surface:#FFFFFF; --surface2:#E9ECE6; --line:#D6DBD3;
+  --ink:#16201B; --muted:#5E6B63; --faint:#9AA59E;
+  --accent:#0F6E45; --accent-ink:#FFFFFF; --accent-soft:#D8EDE0;
+  --out:#9A6B2F; --out-ink:#FFFFFF; --out-soft:#EFDFC6; --plan:#6D5FA8; --plan-soft:#E4DFF3;
+  --good:#1F8A4C; --warn:#C7861A; --crit:#C23B2B;
+  --good-soft:#D9EFE1; --warn-soft:#F8E8C8; --crit-soft:#F6D8D3;
+  /* school layer */
+  --school:#FFFFFF; --wkend:#EEF0EC; --break:#D4EBEA; --break-ink:#1F6F6B; --pubhol:#1F6F6B; --pubhol-ink:#FFFFFF; --staff:#F3E6C8; --staff-ink:#8A6A1B; --noterm:#F7F7F4;
+  --shadow:0 1px 2px rgba(20,32,27,.06),0 6px 20px rgba(20,32,27,.06);
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1411; --surface:#17201B; --surface2:#1F2A24; --line:#2C382F;
+    --ink:#E8EDE9; --muted:#98A69E; --faint:#5F6C64;
+    --accent:#4CC38A; --accent-ink:#0B1A12; --accent-soft:#1C3A2B;
+    --out:#D2A05E; --out-ink:#1A1206; --out-soft:#3B2E1B; --plan:#A79AE0; --plan-soft:#2C2745;
+    --good:#4CC38A; --warn:#E0A83C; --crit:#E2665A;
+    --good-soft:#1C3A2B; --warn-soft:#3C2F14; --crit-soft:#3F1F1B;
+    --school:#1E2923; --wkend:#161E1A; --break:#1B3A39; --break-ink:#7FD1CC; --pubhol:#2E8F8A; --pubhol-ink:#F2FFFE; --staff:#3A3220; --staff-ink:#E0BE6A; --noterm:#141A17;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1411; --surface:#17201B; --surface2:#1F2A24; --line:#2C382F;
+  --ink:#E8EDE9; --muted:#98A69E; --faint:#5F6C64;
+  --accent:#4CC38A; --accent-ink:#0B1A12; --accent-soft:#1C3A2B;
+  --out:#D2A05E; --out-ink:#1A1206; --out-soft:#3B2E1B; --plan:#A79AE0; --plan-soft:#2C2745;
+  --good:#4CC38A; --warn:#E0A83C; --crit:#E2665A;
+  --good-soft:#1C3A2B; --warn-soft:#3C2F14; --crit-soft:#3F1F1B;
+  --school:#1E2923; --wkend:#161E1A; --break:#1B3A39; --break-ink:#7FD1CC; --pubhol:#2E8F8A; --pubhol-ink:#F2FFFE; --staff:#3A3220; --staff-ink:#E0BE6A; --noterm:#141A17;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{color-scheme:light dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:16px 16px 60px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:6px 2px 14px}
+h1{font:600 26px/1 var(--serif);margin:0;letter-spacing:-.01em}
+h1 small{display:block;font:500 12.5px var(--sans);color:var(--muted);margin-top:6px;letter-spacing:.02em}
+.yearsel{display:flex;align-items:center;gap:4px}
+.yearsel button{background:none;border:1px solid var(--line);border-radius:8px;width:32px;height:32px;cursor:pointer;color:var(--muted)}
+.yearsel span{font:500 18px var(--mono);min-width:56px;text-align:center}
+.label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* hero */
+.hero{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;border-left:6px solid var(--st);display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding:16px 18px}
+.hero.good{--st:var(--good);--st-soft:var(--good-soft)}
+.hero.warn{--st:var(--warn);--st-soft:var(--warn-soft)}
+.hero.crit{--st:var(--crit);--st-soft:var(--crit-soft)}
+.big{font:500 52px/1 var(--mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big.rem{color:var(--st)}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.bar{grid-column:1/-1;height:10px;background:var(--surface2);margin-top:14px;border-radius:99px;overflow:hidden;position:relative}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--out);border-radius:99px}
+.bar b{position:absolute;top:0;bottom:0;background:var(--plan);opacity:.6}
+.status{grid-column:1/-1;margin-top:12px;padding:11px 14px;border-radius:10px;background:var(--st-soft);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.status .pill{background:var(--st);color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.status .txt{flex:1;min-width:180px;font-size:14px}
+.status .txt strong{font-family:var(--mono);font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.stat{background:var(--surface);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow)}
+.stat .v{font:500 22px/1.1 var(--mono);margin-top:3px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:12px;color:var(--muted);font-family:var(--sans)}
+@media (max-width:560px){.stats{grid-template-columns:1fr 1fr}.big{font-size:44px}}
+
+.howto{margin:14px 0 4px;font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.howto b{color:var(--ink);font-weight:500}
+.notice{background:var(--warn-soft);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px}
+
+/* legend */
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:10px 0 6px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:5px;border:1px solid var(--line)}
+
+/* months */
+.months{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:8px}
+.month{background:var(--surface);border-radius:14px;padding:12px 12px 10px;box-shadow:var(--shadow)}
+.month h3{margin:0 0 6px;font:600 15px var(--sans);display:flex;justify-content:space-between;align-items:baseline}
+.month h3 span{font:500 12px var(--mono);color:var(--muted)}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;touch-action:pan-y}
+.dow{font:500 10px var(--mono);color:var(--faint);text-align:center;letter-spacing:.04em;padding-bottom:2px}
+.day{position:relative;aspect-ratio:1;border-radius:7px;border:1px solid var(--line);display:flex;align-items:flex-start;justify-content:flex-start;padding:4px 0 0 5px;font:500 12.5px var(--mono);cursor:pointer;user-select:none;background:var(--school);color:var(--ink);transition:transform .06s}
+.day:active{transform:scale(.93)}
+.day.blank{visibility:hidden}
+.day.wk{background:var(--wkend);color:var(--muted)}
+.day.noterm{background:var(--noterm);color:var(--muted)}
+.day.brk{background:var(--break);color:var(--break-ink)}
+.day.hol{background:var(--pubhol);color:var(--pubhol-ink);border-color:var(--pubhol)}
+.day.staff{background:var(--staff);color:var(--staff-ink)}
+.day.brk.wk,.day.hol.wk{opacity:.9}
+.day .tag{position:absolute;left:4px;right:2px;bottom:2px;font:500 8px/1.1 var(--sans);letter-spacing:.01em;text-transform:uppercase;opacity:.85;overflow:hidden;white-space:normal;max-height:2.3em}
+.day.out{background:var(--out);color:var(--out-ink);border-color:var(--out);box-shadow:inset 0 0 0 2px var(--out)}
+.day.out.future{background:var(--out-soft);color:var(--out);border-color:var(--out);border-style:dashed;background-image:repeating-linear-gradient(135deg,transparent 0 3px,rgba(154,107,47,.22) 3px 4px)}
+.day.out .tag{opacity:.7}
+.day.out::after{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border-radius:6px;pointer-events:none}
+.day.today{outline:2px solid var(--ink);outline-offset:1px;z-index:1}
+.day.past:not(.out):not(.hol){}
+
+/* by-term table */
+section{margin-top:22px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.sec-h h2{font:600 15px var(--sans);margin:0}
+.sec-h .hint{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td:first-child,th:first-child{text-align:left}
+td:nth-child(2),th:nth-child(2){text-align:left;font-family:var(--mono);font-size:13px;color:var(--muted)}
+tr:last-child td{border-bottom:none}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px;border:1px solid var(--line)}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 13px;cursor:pointer;font-weight:500;font-size:13.5px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--crit);border-color:var(--crit)}
+.btn.ghost{background:none}
+:where(button,input,select,textarea,a):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+footer{margin-top:28px;text-align:center;font-size:12px;color:var(--faint)}
+footer button{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0 4px}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.overlay[hidden]{display:none}
+.sheet{background:var(--surface);width:100%;max-width:560px;border-radius:18px 18px 0 0;padding:18px 18px 28px;max-height:92vh;overflow:auto}
+@media (min-width:600px){.overlay{align-items:center}.sheet{border-radius:18px}}
+.sheet h3{margin:0 0 12px;font:600 18px var(--sans)}
+.settings-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.settings-row:last-child{border-bottom:none}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{background:none;border:none;padding:6px 12px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+textarea.code{font:12.5px var(--mono);min-height:120px;white-space:pre;width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.err{color:var(--crit);font-size:13px;min-height:18px}
+.tests{font:12.5px var(--mono);white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:12px;margin-top:8px}
+.tests .ok{color:var(--good)} .tests .bad{color:var(--crit)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:13.5px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>KSA Days<small data-i="tagline">Aramco family status · 180-day rule · St Christopher's Bahrain calendar</small></h1>
+    <div class="yearsel">
+      <button id="yPrev" aria-label="Previous year">‹</button>
+      <span id="yLbl" class="mono">2026</span>
+      <button id="yNext" aria-label="Next year">›</button>
+    </div>
+  </header>
+
+  <div id="hero" class="hero good">
+    <div>
+      <div class="label" data-i="daysOut">Days out</div>
+      <div class="big" id="hOut">0</div>
+      <div class="sub" id="hOutSub"></div>
+    </div>
+    <div>
+      <div class="label" data-i="remaining">Remaining</div>
+      <div class="big rem" id="hRem">180</div>
+      <div class="sub" id="hRemSub"></div>
+    </div>
+    <div class="bar"><i id="barOut"></i><b id="barPlan"></b></div>
+    <div class="status"><span class="pill" id="stPill"></span><span class="txt" id="stTxt"></span></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="label" data-i="planned">Planned (future)</div><div class="v" id="sPlan">0</div></div>
+    <div class="stat"><div class="label" data-i="yearEnd">Year-end total</div><div class="v" id="sProj">0 <small>/ 180</small></div></div>
+    <div class="stat"><div class="label" data-i="schoolMissed">School days out</div><div class="v" id="sSchool">0</div></div>
+    <div class="stat"><div class="label" data-i="longest">Longest stretch</div><div class="v" id="sLong">0 <small data-i="days">days</small></div></div>
+  </div>
+
+  <div class="notice" id="calNotice" hidden></div>
+
+  <div class="howto"><span data-i="howto">Tap a day to mark it <b>out of KSA</b>; tap again to clear. Drag across days to paint a whole trip.</span></div>
+  <div class="legend" id="legend"></div>
+
+  <div class="months" id="months"></div>
+
+  <section id="termSec">
+    <div class="sec-h"><h2 data-i="byTerm">School year breakdown</h2><span class="hint" data-i="byTermHint">days out per term and holiday</span></div>
+    <div style="overflow-x:auto"><table id="termTbl"></table></div>
+  </section>
+
+  <footer>
+    <button id="openSettings" data-i="settings">Settings & backup</button> ·
+    <button id="openTests" data-i="runTests">Run tests</button>
+  </footer>
+</div>
+
+<div class="overlay" id="setOv" hidden>
+  <div class="sheet">
+    <h3 data-i="settings">Settings & backup</h3>
+    <div class="settings-row"><span data-i="language">Language</span><span class="seg"><button id="langEn">EN</button><button id="langIt">IT</button></span></div>
+    <div class="settings-row"><span data-i="limit">Yearly limit</span><span class="mono">180 <span data-i="daysOutLower">days out</span></span></div>
+    <div class="settings-row"><span data-i="window">Counting window</span><span data-i="calYear">Calendar year, 1 Jan – 31 Dec</span></div>
+    <div class="settings-row"><span data-i="rule">Rule</span><span style="text-align:right;max-width:60%" data-i="ruleTxt">A day is IN if you are in KSA at the midnight that closes it</span></div>
+    <div class="settings-row"><span data-i="daysStored">Days marked out</span><span class="mono" id="setCount">0</span></div>
+    <h3 style="margin-top:18px;font-size:15px" data-i="backup">Backup</h3>
+    <p class="sub" style="margin:0 0 10px" data-i="backupHint">Data lives only in this browser. Copy the backup text somewhere safe and paste it here on another device to restore. You can also paste a trip list from the old KSA Days ([{"exit":"…","ret":"…"}]).</p>
+    <div class="acts" style="margin-bottom:8px">
+      <button class="btn" id="expJson" data-i="copyJson">Copy backup</button>
+      <button class="btn" id="expCsv" data-i="copyCsv">Copy CSV</button>
+    </div>
+    <textarea class="code" id="ioBox" placeholder='["2026-02-13","2026-02-14"]'></textarea>
+    <div class="acts">
+      <button class="btn" id="impMerge" data-i="importMerge">Import · merge</button>
+      <button class="btn danger" id="impReplace" data-i="importReplace">Import · replace all</button>
+    </div>
+    <div class="err" id="ioErr"></div>
+    <div class="acts" style="justify-content:space-between;margin-top:12px">
+      <button class="btn danger ghost" id="clearYear" data-i="clearYear">Clear this year</button>
+      <button class="btn" id="setClose" data-i="close">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="testOv" hidden>
+  <div class="sheet">
+    <h3 data-i="selfTests">Self-tests</h3>
+    <div class="tests" id="testOut"></div>
+    <div class="acts" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="testClose" data-i="close">Close</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= SCHOOL CALENDAR — St Christopher's School, Bahrain =================
+   Source: st-chris.net/term-dates. Fill from the school's published calendar.
+   Weekend in Bahrain: Friday + Saturday.
+   kinds: term (school open), break (half term / end-of-term holiday), hol (public holiday), staff (staff training day, pupils at home)
+   Dates are inclusive, YYYY-MM-DD. Islamic holidays are subject to moon sighting. */
+const SCHOOL = {
+  years: [
+    { id:'2025-26', label:'2025–26',
+      terms:[ {name:'Spring Term',start:'2026-01-04',end:'2026-03-26'}, {name:'Summer Term',start:'2026-04-05',end:'2026-06-25'} ],
+      breaks:[ {name:'February half term',start:'2026-02-15',end:'2026-02-21'}, {name:'Spring holiday',start:'2026-03-27',end:'2026-04-04'}, {name:'Summer holiday',start:'2026-06-26',end:'2026-08-29'} ],
+      holidays:[ {name:"New Year's Day",date:'2026-01-01'}, {name:'Eid Al-Fitr',start:'2026-03-22',end:'2026-03-24'}, {name:'Labour Day',date:'2026-05-03'}, {name:'Arafat / Eid Al-Adha',start:'2026-05-26',end:'2026-05-29'} ],
+      staff:[] },
+    { id:'2026-27', label:'2026–27',
+      terms:[ {name:'Autumn Term',start:'2026-08-30',end:'2026-12-15'}, {name:'Spring Term',start:'2027-01-03',end:'2027-03-25'}, {name:'Summer Term',start:'2027-04-11',end:'2027-07-01'} ],
+      breaks:[ {name:'October half term',start:'2026-10-25',end:'2026-10-31'}, {name:'Winter holiday',start:'2026-12-16',end:'2027-01-02'}, {name:'February half term',start:'2027-02-14',end:'2027-02-20'}, {name:'Spring holiday',start:'2027-03-26',end:'2027-04-10'}, {name:'May half term',start:'2027-05-16',end:'2027-05-22'}, {name:'Summer holiday',start:'2027-07-02',end:'2027-08-28'} ],
+      holidays:[ {name:'National Day',start:'2026-12-16',end:'2026-12-17'}, {name:"New Year's Day",date:'2027-01-01'}, {name:'Eid Al-Fitr',start:'2027-03-10',end:'2027-03-13'} ],
+      staff:[] },
+    { id:'2027-28', label:'2027–28',
+      terms:[ {name:'Autumn Term (end TBC)',start:'2027-08-29',end:'2027-12-31',tbc:true} ],
+      breaks:[],
+      holidays:[ {name:'National Day',start:'2027-12-16',end:'2027-12-17'} ],
+      staff:[] },
+  ],
+  tbcNote:{ en:'Autumn 2027: half term and end of term are not yet published by the school; the term is drawn through December as a placeholder.', it:'Autunno 2027: half term e fine trimestre non ancora pubblicati dalla scuola; il trimestre è disegnato fino a dicembre come segnaposto.' },
+  weekend:[5,6] // JS getUTCDay: 0=Sun … 5=Fri, 6=Sat
+};
+const SCHOOL_READY = SCHOOL.years.some(y=>y.terms.length);
+
+/* ================= DATE HELPERS ================= */
+const D = {
+  toNum(s){ const [y,m,d]=s.split('-').map(Number); return Math.round(Date.UTC(y,m-1,d)/86400000); },
+  fromNum(n){ return new Date(n*86400000).toISOString().slice(0,10); },
+  add(s,k){ return D.fromNum(D.toNum(s)+k); },
+  today(){ const t=new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; },
+  year(s){ return +s.slice(0,4); },
+  daysInYear(y){ return ((y%4===0&&y%100!==0)||y%400===0)?366:365; },
+  dim(y,m){ return new Date(Date.UTC(y,m,0)).getUTCDate(); },
+  dow(s){ return new Date(D.toNum(s)*86400000).getUTCDay(); },
+  ymd(y,m,d){ return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+};
+const LIMIT=180;
+const inRange=(d,a,b)=>d>=a&&d<=b;
+
+/* ================= SCHOOL CLASSIFICATION (pure) ================= */
+function schoolInfo(date){
+  const wk = SCHOOL.weekend.includes(D.dow(date));
+  for(const y of SCHOOL.years){
+    const hol=y.holidays.find(h=>inRange(date,h.start||h.date,h.end||h.date)); if(hol) return {kind:'hol',name:hol.name,wk,year:y.id};
+    if(y.staff.some(s=>(s.date||s)===date)) { const s=y.staff.find(s=>(s.date||s)===date); return {kind:'staff',name:s.name||'Staff day',wk,year:y.id}; }
+    const brk=y.breaks.find(b=>inRange(date,b.start,b.end)); if(brk) return {kind:'break',name:brk.name,wk,year:y.id};
+    const term=y.terms.find(t=>inRange(date,t.start,t.end)); if(term) return {kind:wk?'weekend':'school',name:term.name,wk,year:y.id};
+  }
+  return {kind: wk?'weekend':'noterm', name:'', wk, year:null};
+}
+
+/* ================= COUNTING (pure) =================
+   Midnight rule: a marked date = I was outside KSA at the midnight that closes that date. */
+function yearStats(outSet, year, today){
+  const start=D.toNum(`${year}-01-01`), end=start+D.daysInYear(year), tn=D.toNum(today);
+  let out=0, plan=0, longest=0, run=0, school=0;
+  for(let n=start;n<end;n++){
+    const d=D.fromNum(n);
+    if(outSet.has(d)){ if(n<=tn) out++; else plan++; run++; longest=Math.max(longest,run); if(schoolInfo(d).kind==='school') school++; }
+    else run=0;
+  }
+  return { out, plan, total: out+plan, longest, school, remaining: LIMIT-out-plan };
+}
+/* If I am (or go) out from `from` and stay, last date I can still return this year. Counts marked days before `from` (actual + planned). */
+function mustBeBackBy(outSet, year, from){
+  let used=0; const fn=D.toNum(from);
+  for(let n=D.toNum(`${year}-01-01`); n<fn; n++) if(outSet.has(D.fromNum(n))) used++;
+  const budget=LIMIT-used;
+  if(budget<=0) return {date:from, budget, none:false};
+  const back=D.add(from,budget);
+  if(D.year(back)>year) return {date:null, budget, none:true};
+  return {date:back, budget, none:false};
+}
+function statusFor(remaining){ return remaining>45?'good':remaining>=15?'warn':'crit'; }
+
+/* ================= STATE ================= */
+const KEY='ksa-days-cal-v1';
+let state={ out:[], lang:'en' };
+let outSet=new Set();
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.out)) state=Object.assign(state,s); }catch(e){} outSet=new Set(state.out); }
+function save(){ state.out=[...outSet].sort(); try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+/* ================= I18N ================= */
+const T={
+ en:{tagline:"Aramco family status · 180-day rule · St Christopher's Bahrain calendar",daysOut:'Days out',remaining:'Remaining',planned:'Planned (future)',yearEnd:'Year-end total',schoolMissed:'School days out',longest:'Longest stretch',days:'days',
+  howto:'Tap a day to mark it <b>out of KSA</b>; tap again to clear. Drag across days to paint a whole trip.',byTerm:'School year breakdown',byTermHint:'days out per term and holiday',settings:'Settings & backup',runTests:'Run tests',
+  language:'Language',limit:'Yearly limit',daysOutLower:'days out',window:'Counting window',calYear:'Calendar year, 1 Jan – 31 Dec',rule:'Rule',ruleTxt:'A day is IN if you are in KSA at the midnight that closes it',daysStored:'Days marked out',backup:'Backup',
+  backupHint:'Data lives only in this browser. Copy the backup text somewhere safe and paste it here on another device to restore. You can also paste a trip list from the old KSA Days.',copyJson:'Copy backup',copyCsv:'Copy CSV',importMerge:'Import · merge',importReplace:'Import · replace all',clearYear:'Clear this year',close:'Close',selfTests:'Self-tests',
+  ofLimit:'of 180 · up to today',inclPlanned:'after planned days',stOk:'On track',stWarn:'Watch it',stCrit:'Danger',stOver:'Over the limit',
+  backBy:(d)=>`If you leave today and stay away, you must be back in KSA by <strong>${d}</strong>.`,backNone:'Even staying away for the rest of the year would not reach 180.',
+  overBy:(n)=>`Marked days exceed 180 by <strong>${n}</strong>. Remove planned days or contact Government Affairs.`,atLimit:'All 180 days are used. Every remaining night this year must be in KSA.',
+  pastYear:(y)=>`Closed year ${y}.`,futureYear:'Future year — everything marked is planned.',
+  legSchool:'School day',legWk:'Weekend (Fri–Sat)',legBreak:'School holiday / half term',legHol:'Public holiday',legStaff:'Staff day',legOut:'Out (done)',legPlan:'Out (planned)',legNoterm:'No calendar yet',
+  noCal:"School calendar not loaded yet — days show only weekends. Term dates from st-chris.net will appear here once added.",
+  term:'Period',dates:'Dates',schoolDays:'School days',outCol:'Out',cleared:'Year cleared',copied:'Copied to clipboard',copyFail:'Copy failed — select the text and copy manually.',imported:(n)=>`Imported ${n} days`,importErr:'Could not read that. Paste a list of dates or a trip list.',
+  months:['January','February','March','April','May','June','July','August','September','October','November','December'],dows:['Su','Mo','Tu','We','Th','Fr','Sa'],outShort:'out',holNat:'Hol'},
+ it:{tagline:"Family status Aramco · regola dei 180 giorni · calendario St Christopher's Bahrain",daysOut:'Giorni fuori',remaining:'Rimanenti',planned:'Pianificati (futuri)',yearEnd:'Totale a fine anno',schoolMissed:'Giorni di scuola fuori',longest:'Periodo più lungo',days:'giorni',
+  howto:'Tocca un giorno per segnarlo <b>fuori dal KSA</b>; tocca di nuovo per cancellare. Trascina sui giorni per colorare un intero viaggio.',byTerm:'Riepilogo anno scolastico',byTermHint:'giorni fuori per trimestre e vacanza',settings:'Impostazioni e backup',runTests:'Esegui test',
+  language:'Lingua',limit:'Limite annuale',daysOutLower:'giorni fuori',window:'Periodo di conteggio',calYear:'Anno solare, 1 gen – 31 dic',rule:'Regola',ruleTxt:'Un giorno è IN se sei in KSA alla mezzanotte che lo chiude',daysStored:'Giorni segnati fuori',backup:'Backup',
+  backupHint:'I dati vivono solo in questo browser. Copia il testo del backup in un posto sicuro e incollalo qui su un altro dispositivo. Puoi anche incollare la lista viaggi del vecchio KSA Days.',copyJson:'Copia backup',copyCsv:'Copia CSV',importMerge:'Importa · unisci',importReplace:'Importa · sostituisci tutto',clearYear:'Cancella quest’anno',close:'Chiudi',selfTests:'Auto-test',
+  ofLimit:'su 180 · fino a oggi',inclPlanned:'dopo i giorni pianificati',stOk:'In regola',stWarn:'Attenzione',stCrit:'Pericolo',stOver:'Oltre il limite',
+  backBy:(d)=>`Se parti oggi e resti fuori, devi rientrare in KSA entro <strong>${d}</strong>.`,backNone:'Anche restando fuori fino a fine anno non arriveresti a 180.',
+  overBy:(n)=>`I giorni segnati superano 180 di <strong>${n}</strong>. Togli giorni pianificati o contatta Government Affairs.`,atLimit:'Hai usato tutti i 180 giorni. Ogni notte rimanente dell’anno deve essere in KSA.',
+  pastYear:(y)=>`Anno chiuso ${y}.`,futureYear:'Anno futuro: tutto ciò che è segnato è pianificato.',
+  legSchool:'Giorno di scuola',legWk:'Weekend (ven–sab)',legBreak:'Vacanza scolastica / half term',legHol:'Festività pubblica',legStaff:'Giornata staff',legOut:'Fuori (fatto)',legPlan:'Fuori (pianificato)',legNoterm:'Calendario non ancora caricato',
+  noCal:'Calendario scolastico non ancora caricato: i giorni mostrano solo i weekend. Le date di st-chris.net appariranno qui una volta inserite.',
+  term:'Periodo',dates:'Date',schoolDays:'Giorni di scuola',outCol:'Fuori',cleared:'Anno cancellato',copied:'Copiato negli appunti',copyFail:'Copia fallita: seleziona il testo e copialo a mano.',imported:(n)=>`Importati ${n} giorni`,importErr:'Impossibile leggere. Incolla una lista di date o di viaggi.',
+  months:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],dows:['Do','Lu','Ma','Me','Gi','Ve','Sa'],outShort:'fuori',holNat:'Fest'}
+};
+const t=(k,...a)=>{ const v=T[state.lang][k]; return typeof v==='function'?v(...a):v; };
+function fmt(s){ if(!s) return '—'; const [y,m,d]=s.split('-'); return `${+d} ${t('months')[+m-1].slice(0,3)} ${y}`; }
+function fmtShort(s){ const [y,m,d]=s.split('-'); return `${+d} ${t('months')[+m-1].slice(0,3)}`; }
+
+/* ================= RENDER ================= */
+const $=id=>document.getElementById(id);
+let viewYear=D.year(D.today());
+function applyStatic(){
+  document.querySelectorAll('[data-i]').forEach(el=>{ const v=T[state.lang][el.dataset.i]; if(typeof v==='string'){ if(el.dataset.i==='howto') el.innerHTML=v; else el.textContent=v; } });
+  $('langEn').classList.toggle('on',state.lang==='en'); $('langIt').classList.toggle('on',state.lang==='it');
+  document.documentElement.lang=state.lang;
+}
+function render(){
+  applyStatic();
+  const today=D.today(), curY=D.year(today), y=viewYear;
+  const s=yearStats(outSet,y,today);
+  $('yLbl').textContent=y;
+  const rem=LIMIT-s.out, remPlan=LIMIT-s.total;
+  const st= remPlan<0?'crit':statusFor(remPlan);
+  $('hero').className='hero '+st;
+  $('hOut').textContent=s.out; $('hRem').textContent=Math.max(remPlan,0);
+  $('hOutSub').textContent= y===curY? t('ofLimit') : (y<curY? `/ 180` : '');
+  $('hRemSub').textContent= s.plan? t('inclPlanned') : '';
+  const pOut=Math.min(s.out/LIMIT*100,100), pPlan=Math.min(s.plan/LIMIT*100,100-pOut);
+  $('barOut').style.width=pOut+'%'; $('barPlan').style.left=pOut+'%'; $('barPlan').style.width=pPlan+'%';
+  let pill,txt;
+  if(y<curY){ pill=rem<0?t('stOver'):t('stOk'); txt=rem<0?t('overBy',-rem):t('pastYear',y); }
+  else {
+    const mb=mustBeBackBy(outSet,y, y===curY?today:`${y}-01-01`);
+    if(remPlan<0){ pill=t('stOver'); txt=t('overBy',-remPlan); }
+    else if(mb.budget<=0){ pill=t('stCrit'); txt=t('atLimit'); }
+    else { pill=t(st==='good'?'stOk':st==='warn'?'stWarn':'stCrit'); txt= y>curY? t('futureYear') : (mb.none? t('backNone') : t('backBy',fmt(mb.date))); }
+  }
+  $('stPill').textContent=pill; $('stTxt').innerHTML=txt;
+  $('sPlan').textContent=s.plan; $('sProj').innerHTML=`${s.total} <small>/ 180</small>`; $('sSchool').textContent=s.school; $('sLong').innerHTML=`${s.longest} <small>${t('days')}</small>`;
+  const tbc = SCHOOL_READY && SCHOOL.years.some(sy=>sy.terms.some(tm=>tm.tbc && D.year(tm.start)===y));
+  $('calNotice').hidden=SCHOOL_READY && !tbc; $('calNotice').textContent=SCHOOL_READY? SCHOOL.tbcNote[state.lang] : t('noCal');
+  renderLegend(); renderMonths(y,today); renderTerms(y,today);
+  $('setCount').textContent=outSet.size;
+}
+function renderLegend(){
+  const items=[['school',t('legSchool')],['wk',t('legWk')],['brk',t('legBreak')],['hol',t('legHol')],['staff',t('legStaff')],['out',t('legOut')],['out future',t('legPlan')]];
+  if(!SCHOOL_READY) items.splice(0,1,['noterm',t('legNoterm')]);
+  $('legend').innerHTML=items.map(([c,l])=>`<span><i class="day ${c}" style="aspect-ratio:auto;padding:0;cursor:default"></i>${l}</span>`).join('');
+}
+function renderMonths(y,today){
+  const tn=D.toNum(today); const dows=t('dows'); const M=t('months');
+  let html='';
+  for(let m=1;m<=12;m++){
+    const dim=D.dim(y,m); const first=D.dow(D.ymd(y,m,1));
+    let cnt=0; for(let d=1;d<=dim;d++) if(outSet.has(D.ymd(y,m,d))) cnt++;
+    html+=`<div class="month"><h3>${M[m-1]}<span>${cnt?cnt+' '+t('outShort'):''}</span></h3><div class="mgrid">`;
+    html+=dows.map(x=>`<div class="dow">${x}</div>`).join('');
+    for(let i=0;i<first;i++) html+='<div class="day blank"></div>';
+    for(let d=1;d<=dim;d++){
+      const ds=D.ymd(y,m,d), n=D.toNum(ds), info=schoolInfo(ds);
+      let cls='day';
+      if(info.kind==='hol') cls+=' hol'; else if(info.kind==='staff') cls+=' staff'; else if(info.kind==='break') cls+=' brk'; else if(info.kind==='weekend') cls+=' wk'; else if(info.kind==='noterm') cls+=' noterm';
+      if(info.wk && info.kind!=='hol' && info.kind!=='break' && info.kind!=='staff') cls+=' wk';
+      if(outSet.has(ds)) cls+=' out'; if(n>tn) cls+=' future'; else cls+=' past'; if(n===tn) cls+=' today';
+      const prev=schoolInfo(D.add(ds,-1)); const showTag=(info.kind==='hol'||info.kind==='staff'||info.kind==='break') && (prev.name!==info.name || prev.kind!==info.kind || d===1);
+      const tag = showTag ? `<span class="tag">${esc(short(info.name))}</span>`:'';
+      html+=`<div class="${cls}" data-d="${ds}" title="${fmt(ds)}${info.name?' · '+esc(info.name):''}" role="button" tabindex="0" aria-pressed="${outSet.has(ds)}">${d}${tag}</div>`;
+    }
+    html+='</div></div>';
+  }
+  $('months').innerHTML=html;
+}
+function short(n){ return (n||'').replace(/February half term|October half term|May half term/i,'Half term').replace(/Spring holiday/i,'Spring hol.').replace(/Summer holiday/i,'Summer hol.').replace(/Winter holiday/i,'Winter hol.').replace(/Arafat \/ Eid Al-Adha/i,'Eid Al-Adha').replace(/New Year's Day/i,'New Year'); }
+function renderTerms(y,today){
+  const sec=$('termSec'); if(!SCHOOL_READY){ sec.hidden=true; return; } sec.hidden=false;
+  const ys=`${y}-01-01`, ye=`${y}-12-31`;
+  const rows=[];
+  for(const sy of SCHOOL.years){
+    const periods=[...sy.terms.map(x=>({...x,kind:'school'})),...sy.breaks.map(x=>({...x,kind:'brk'}))].filter(p=>p.end>=ys&&p.start<=ye).sort((a,b)=>a.start.localeCompare(b.start));
+    for(const p of periods){
+      const a=Math.max(D.toNum(p.start),D.toNum(ys)), b=Math.min(D.toNum(p.end),D.toNum(ye));
+      let out=0, sd=0; for(let n=a;n<=b;n++){ const d=D.fromNum(n); if(outSet.has(d)) out++; if(schoolInfo(d).kind==='school') sd++; }
+      rows.push(`<tr><td><span class="sw day ${p.kind}" style="aspect-ratio:auto;padding:0"></span>${esc(p.name)} <span style="color:var(--muted);font-size:12px">${sy.label}</span></td><td>${fmtShort(D.fromNum(a))} – ${fmtShort(D.fromNum(b))}</td><td>${sd||'—'}</td><td><b>${out||''}</b></td></tr>`);
+    }
+  }
+  $('termTbl').innerHTML=`<tr><th>${t('term')}</th><th>${t('dates')}</th><th>${t('schoolDays')}</th><th>${t('outCol')}</th></tr>`+rows.join('');
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+let toastT; function toast(m){ const el=$('toast'); el.textContent=m; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2000); }
+
+/* ================= INTERACTION: tap + drag-paint ================= */
+let painting=null, touched=new Set();
+function setDay(ds,on){ if(on) outSet.add(ds); else outSet.delete(ds); }
+function cellAt(x,y){ const el=document.elementFromPoint(x,y); return el&&el.classList.contains('day')&&el.dataset.d?el:null; }
+const months=$('months');
+months.addEventListener('pointerdown',e=>{
+  const el=e.target.closest('.day[data-d]'); if(!el) return;
+  painting = !outSet.has(el.dataset.d); touched=new Set([el.dataset.d]); setDay(el.dataset.d,painting); el.classList.toggle('out',painting); el.setAttribute('aria-pressed',painting);
+  months.setPointerCapture?.(e.pointerId);
+});
+months.addEventListener('pointermove',e=>{
+  if(painting===null) return; const el=cellAt(e.clientX,e.clientY); if(!el||touched.has(el.dataset.d)) return;
+  touched.add(el.dataset.d); setDay(el.dataset.d,painting); el.classList.toggle('out',painting);
+  if(e.cancelable) e.preventDefault();
+});
+const endPaint=()=>{ if(painting===null) return; painting=null; save(); render(); };
+months.addEventListener('pointerup',endPaint); months.addEventListener('pointercancel',endPaint);
+months.addEventListener('touchmove',e=>{ if(painting!==null && touched.size>1 && e.cancelable) e.preventDefault(); },{passive:false});
+months.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&e.target.dataset.d){ e.preventDefault(); setDay(e.target.dataset.d,!outSet.has(e.target.dataset.d)); save(); render(); } });
+
+$('yPrev').onclick=()=>{viewYear--;render();}; $('yNext').onclick=()=>{viewYear++;render();};
+
+/* settings */
+$('openSettings').onclick=()=>{ $('ioBox').value=''; $('ioErr').textContent=''; $('setOv').hidden=false; };
+$('setClose').onclick=()=>$('setOv').hidden=true;
+$('setOv').addEventListener('click',e=>{ if(e.target===$('setOv')) $('setOv').hidden=true; });
+$('langEn').onclick=()=>{state.lang='en';save();render();}; $('langIt').onclick=()=>{state.lang='it';save();render();};
+async function copyText(txt){ $('ioBox').value=txt; try{ await navigator.clipboard.writeText(txt); toast(t('copied')); }catch(e){ $('ioBox').select(); toast(t('copyFail')); } }
+$('expJson').onclick=()=>copyText(JSON.stringify([...outSet].sort()));
+$('expCsv').onclick=()=>copyText('date,school_status\n'+[...outSet].sort().map(d=>`${d},${schoolInfo(d).kind}`).join('\n'));
+function parseImport(txt){
+  const v=JSON.parse(txt); if(!Array.isArray(v)) throw 0; const out=[]; const re=/^\d{4}-\d{2}-\d{2}$/; const today=D.today();
+  for(const x of v){
+    if(typeof x==='string'&&re.test(x)) out.push(x);
+    else if(x&&re.test(x.exit)){ const a=D.toNum(x.exit), b=x.ret&&re.test(x.ret)?D.toNum(x.ret):D.toNum(today)+1; for(let n=a;n<b;n++) out.push(D.fromNum(n)); }
+  }
+  return out;
+}
+function doImport(replace){ let arr; try{ arr=parseImport($('ioBox').value); }catch(e){ $('ioErr').textContent=t('importErr'); return; } if(replace) outSet=new Set(); arr.forEach(d=>outSet.add(d)); save(); render(); $('ioErr').textContent=''; toast(t('imported',arr.length)); }
+$('impMerge').onclick=()=>doImport(false); $('impReplace').onclick=()=>doImport(true);
+$('clearYear').onclick=()=>{ [...outSet].filter(d=>D.year(d)===viewYear).forEach(d=>outSet.delete(d)); save(); render(); toast(t('cleared')); };
+
+/* ================= SELF-TESTS ================= */
+function runTests(){
+  const R=[]; const ok=(n,c,g)=>R.push({name:n,pass:!!c,got:g}); const TD='2026-09-02';
+  const S=a=>new Set(a);
+  let s=yearStats(S([]),2026,TD); ok('Empty year: 0 out, 180 remaining', s.out===0&&s.remaining===180, s.out);
+  s=yearStats(S(['2026-03-10','2026-03-11']),2026,TD); ok('10–11 Mar marked = 2 out', s.out===2, s.out);
+  s=yearStats(S(['2026-12-30','2026-12-31','2027-01-01','2027-01-02']),2026,TD); const s27=yearStats(S(['2026-12-30','2026-12-31','2027-01-01','2027-01-02']),2027,TD);
+  ok('New Year straddle: 2 in 2026, 2 in 2027', s.total===2&&s27.total===2, s.total+'/'+s27.total);
+  s=yearStats(S(['2026-09-01','2026-09-02','2026-09-03']),2026,TD); ok('Past+today actual (2), future planned (1)', s.out===2&&s.plan===1, s.out+'/'+s.plan);
+  s=yearStats(S([]),2028,'2028-12-31'); ok('Leap year iterates 366 days', D.daysInYear(2028)===366, D.daysInYear(2028));
+  const half=[]; for(let n=D.toNum('2026-01-01');n<D.toNum('2026-06-30');n++) half.push(D.fromNum(n));
+  s=yearStats(S(half),2026,TD); ok('1 Jan–29 Jun marked = 180 out, remaining 0', s.out===180&&s.remaining===0, s.out);
+  s=yearStats(S([...half,'2026-06-30']),2026,TD); ok('181 marked → remaining −1', s.remaining===-1, s.remaining);
+  let mb=mustBeBackBy(S([]),2026,'2026-01-01'); ok('Empty year, leave 1 Jan → back by 30 Jun', mb.date==='2026-06-30', mb.date);
+  mb=mustBeBackBy(S(half.slice(0,179)),2026,'2026-09-02'); ok('179 used, leave 2 Sep → back by 3 Sep', mb.date==='2026-09-03', mb.date);
+  mb=mustBeBackBy(S([]),2026,'2026-09-02'); ok('Empty year, leave 2 Sep → cannot reach 180', mb.none===true, mb.none);
+  ok('Status thresholds 46/45/15/14', statusFor(46)==='good'&&statusFor(45)==='warn'&&statusFor(15)==='warn'&&statusFor(14)==='crit','');
+  ok('Bahrain weekend = Fri+Sat', schoolInfo('2026-09-04').wk===true && schoolInfo('2026-09-05').wk===true && schoolInfo('2026-09-06').wk===false, '');
+  s=yearStats(S(['2026-02-01','2026-02-02','2026-02-03','2026-05-01']),2026,TD); ok('Longest stretch = 3', s.longest===3, s.longest);
+  const imp=parseImport('[{"exit":"2026-03-10","ret":"2026-03-12"},"2026-04-01"]'); ok('Import trips → dates (exit..ret-1) + plain dates', imp.join(',')==='2026-03-10,2026-03-11,2026-04-01', imp.join(','));
+  return R;
+}
+$('openTests').onclick=()=>{ const R=runTests(); const p=R.filter(r=>r.pass).length; $('testOut').innerHTML=`<b>${p}/${R.length} passed</b>\n\n`+R.map(r=>`<span class="${r.pass?'ok':'bad'}">${r.pass?'✓':'✗'}</span> ${esc(r.name)}${r.pass?'':' — got '+esc(r.got)}`).join('\n'); $('testOv').hidden=false; };
+$('testClose').onclick=()=>$('testOv').hidden=true;
+$('testOv').addEventListener('click',e=>{ if(e.target===$('testOv')) $('testOv').hidden=true; });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ $('setOv').hidden=true; $('testOv').hidden=true; } });
+
+load(); render();
+</script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
